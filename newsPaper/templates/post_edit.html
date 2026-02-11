@@ -1,0 +1,39 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+    {% if request.resolver_match.url_name == 'news_create' %}
+        Создание новости
+    {% elif request.resolver_match.url_name == 'article_create' %}
+        Создание статьи
+    {% elif request.resolver_match.url_name == 'news_update' %}
+        Редактирование новости
+    {% elif request.resolver_match.url_name == 'article_update' %}
+        Редактирование статьи
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+    <h1>
+        {% if request.resolver_match.url_name == 'news_create' %}
+            Создать новость
+        {% elif request.resolver_match.url_name == 'article_create' %}
+            Создать статью
+        {% elif request.resolver_match.url_name == 'news_update' %}
+            Редактировать новость
+        {% elif request.resolver_match.url_name == 'article_update' %}
+            Редактировать статью
+        {% endif %}
+    </h1>
+    
+    <hr>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить" />
+    </form>
+    
+    <hr>
+    <a href="/news/">← Вернуться к списку</a>
+{% endblock content %}

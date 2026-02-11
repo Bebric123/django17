@@ -1,56 +1,54 @@
-{% extends 'flatpages/default.html' %} 
+{% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 {% load custom_tags %}
- 
+
 {% block title %}
-Posts
+Поиск
 {% endblock title %}
 
 {% block content %}
-   <h1>Все товары</h1>
-   <h3>{{ time_now|date:'M d Y' }}</h3>
-   <p>
-       <a href="/news/search/">Расширенный поиск</a>
-   </p>
-   <p>
-        <a href="create/">➕ Создать новость</a>
-        <a href="news/articles/create/" style="margin-left: 20px;">📝 Создать статью</a>
-    </p>
+   <h1>Поиск по публикациям</h1>
+   
+   <!-- Форма фильтрации -->
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+   </form>
 
-   <h3>Всего новостей: {{ posts|length }}</h3>
    <hr>
+
+   <h3>Результаты поиска: {{ posts|length }} публикаций</h3>
+
    {% if posts %}
        <table>
            <tr>
+               <td>Тип</td>
                <td>Название</td>
+               <td>Автор</td>
                <td>Категория</td>
                <td>Текст</td>
                <td>Дата</td>
+               <td>Рейтинг</td>
            </tr>
            {% for post in posts %}
            <tr>
+               <td>{{ post.get_post_type_display }}</td>
                <td>
                    <a href="/news/{{ post.id }}">{{ post.title|censor }}</a>
                </td>
-               <td>{{ post.categories.all|join:", " |truncatewords:2 }}</td>
-               <td>{{ post.content|censor|truncatewords:20  }}</td>
-               <td>{{ post.created_at|date:'d.m.y' }}</td>
-               <td>
-                {% if post.post_type == 'NW' %}
-                    <a href="/news/{{ post.id }}/edit/">✏️</a>
-                    <a href="/news/{{ post.id }}/delete/">🗑️</a>
-                {% else %}
-                    <a href="articles/{{ post.id }}/edit/">✏️</a>
-                    <a href="articles/{{ post.id }}/delete/">🗑️</a>
-                {% endif %}
-            </td>
+               <td>{{ post.author.user.username }}</td>
+               <td>{{ post.categories.all|join:", "|truncatewords:2 }}</td>
+               <td>{{ post.content|censor|truncatewords:20 }}</td>
+               <td>{{ post.created_at|date:'d.m.Y' }}</td>
+               <td>{{ post.rating }}</td>
            </tr>
            {% endfor %}
-
        </table>
    {% else %}
-       <h2>Товаров нет!</h2>
+       <h2>Публикаций по вашему запросу не найдено!</h2>
    {% endif %}
+
+   <!-- Пагинация -->
    {% if page_obj.has_previous %}
        <a href="?{% url_replace page=1 %}">1</a>
        {% if page_obj.previous_page_number != 1 %}
@@ -63,9 +61,13 @@ Posts
 
    {% if page_obj.has_next %}
        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
-       {% if paginator.num_pages != page_obj.next_page_number %}
+       {% if page_obj.next_page_number != page_obj.paginator.num_pages %}
            ...
            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
        {% endif %}
    {% endif %}
+   
+   <p>
+       <a href="/news/">← Вернуться ко всем публикациям</a>
+   </p>
 {% endblock content %}

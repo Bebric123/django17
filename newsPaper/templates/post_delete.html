@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+    {% if post.post_type == 'NW' %}
+        Удаление новости
+    {% else %}
+        Удаление статьи
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+    <h1>
+        {% if post.post_type == 'NW' %}
+            Удаление новости
+        {% else %}
+            Удаление статьи
+        {% endif %}
+    </h1>
+    
+    <hr>
+    
+    <h3>Вы уверены, что хотите удалить "{{ post.title }}"?</h3>
+    
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Да, удалить" />
+    </form>
+    
+    <hr>
+    <a href="/news/">← Отмена</a>
+{% endblock content %}
