@@ -1,0 +1,26 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+
+{% block title %}
+Регистрация
+{% endblock title %}
+
+{% block content %}
+<h1>Регистрация</h1>
+
+<div style="max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+    <form method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button type="submit" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">
+            Зарегистрироваться
+        </button>
+    </form>
+    <p style="margin-top: 20px;">
+        Уже есть аккаунт? <a href="{% url 'account_login' %}">Войти</a>
+    </p>
+</div>
+{% endblock content %}

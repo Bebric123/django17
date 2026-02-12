@@ -1,0 +1,23 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Подтверждение email
+{% endblock title %}
+
+{% block content %}
+<h1>Подтверждение email</h1>
+
+{% if confirmation %}
+    <p>Пожалуйста, подтвердите, что email <strong>{{ confirmation.email_address.email }}</strong> принадлежит пользователю {{ confirmation.email_address.user }}.</p>
+    
+    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+        {% csrf_token %}
+        <button type="submit" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">
+            Подтвердить
+        </button>
+    </form>
+{% else %}
+    <p>Ссылка для подтверждения email недействительна или устарела.</p>
+    <p><a href="{% url 'account_email' %}">Запросить новое подтверждение</a></p>
+{% endif %}
+{% endblock content %}

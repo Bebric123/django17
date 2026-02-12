@@ -15,30 +15,70 @@
     <body>
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">Django flatpages</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarResponsive"
-                    aria-controls="navbarResponsive" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about/">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contacts/">Contact</a>
-                    </li>
-                </ul>
+            <div class="container">
+                <a class="navbar-brand" href="/news/">News Portal</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarResponsive"
+                        aria-controls="navbarResponsive" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/news/">Главная</a>
+                        </li>
+                        
+                        {% if user.is_authenticated %}
+                            {% if perms.news.add_post or user.is_superuser %}
+                                {% if user.groups.all.0.name == 'authors' or user.is_superuser %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/news/create/">➕ Новость</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/news/articles/create/">📝 Статья</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                    
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <span class="navbar-text" style="color: white; margin-right: 10px;">
+                                    Привет, {{ user.username }}!
+                                </span>
+                            </li>
+                            
+                            <li class="nav-item">
+                                {% if not user.groups.all.0.name == 'authors' and not user.is_superuser %}
+                                    <form method="post" action="{% url 'become_author' %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-warning btn-sm">⭐ Стать автором</button>
+                                    </form>
+                                {% else %}
+                                    <span class="badge badge-success" style="padding: 5px 10px; background: green; color: white; border-radius: 3px;">✓ Автор</span>
+                                {% endif %}
+                            </li>
+                            
+                            <li class="nav-item">
+                                <form method="post" action="{% url 'account_logout' %}" style="display: inline; margin-left: 10px;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Выйти</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" href="{% url 'account_login' %}">Войти</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-success btn-sm" href="{% url 'account_signup' %}" style="margin-left: 10px;">Регистрация</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
         </nav>
         <!-- Page content-->
         <div class="container">
