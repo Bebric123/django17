@@ -8,6 +8,26 @@ Posts
 
 {% block content %}
    <h1>Все товары</h1>
+   {% if user.is_authenticated %}
+   <div style="margin: 20px 0; padding: 15px; background: #f0f0f0; border-radius: 5px;">
+       <h3>Управление подписками:</h3>
+       <p>
+           <a href="subscriptions/">
+                Управлять подписками на категории
+           </a>
+           <form method="post" action="{% url 'subscribe_weekly' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="padding: 10px 20px; background: #4CAF50; color: white;">
+                    Подписаться на еженедельную рассылку
+                </button>
+            </form>
+       </p>
+   </div>
+   {% else %}
+   <p style="margin: 20px 0;">
+       <a href="{% url 'account_login' %}">Войдите</a>, чтобы управлять подписками
+   </p>
+   {% endif %}
    <h3>{{ time_now|date:'M d Y' }}</h3>
    <p>
        <a href="/news/search/">Расширенный поиск</a>

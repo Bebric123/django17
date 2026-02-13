@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Новая новость</title>
+</head>
+<body style="font-family: Arial, sans-serif;">
+    <div style="background: blueviolet; color: white; padding: 30px; text-align: center;">
+        <h1 style="margin: 0;">News Portal</h1>
+    </div>
+    
+    <div style="background: #fff; padding: 30px;">
+        <h2 style="color: #667eea; margin-top: 0;">Новая новость!</h2>
+        
+        <h3 style="font-size: 24px; margin: 20px 0;">{{ post.title }}</h3>
+        
+        <div style="background: #f5f5f5; padding: 20px;">
+            <p style="margin: 0;"><strong>Краткое содержание:</strong></p>
+
+            <p style="margin: 10px 0 0 0;">{{ post.content|truncatewords:50 }}</p>
+        </div>
+        
+        <p><strong>Категории:</strong> 
+            {% for category in categories %}
+                <span style="display: inline-block; background: #e0e7ff; color: #4338ca; padding: 3px 8px;">
+                    {{ category.name }}
+                </span>
+            {% endfor %}
+        </p>
+        
+        <p><strong>Автор:</strong> {{ post.author.user.username }}</p>
+        <p><strong>Дата:</strong> {{ post.created_at|date:'d.m.Y H:i' }}</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/news/{{ post.id }}" style="display: inline-block; background: #667eea; color: white;">
+                Читать полностью
+            </a>
+        </div>
+        
+        <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">
+            Вы получили это письмо, потому что подписаны на обновления категорий.<br>
+            <a href="{{ site_url }}/subscriptions/" style="color: #667eea;">Управлять подписками</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Добро пожаловать!</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <h1 style="margin: 0;">Добро пожаловать!</h1>
+    </div>
+    
+    <div style="background: #fff; padding: 30px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 10px 10px;">
+        <h2 style="color: #667eea;">Здравствуйте, {{ user.username }}!</h2>
+        
+        <p style="font-size: 18px;">Спасибо за регистрацию на <strong>News Portal</strong>! 🎊</p>
+        
+        <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; margin: 30px 0;">
+            <h3 style="margin-top: 0;">Что вы можете делать:</h3>
+            <ul style="list-style-type: none; padding: 0;">
+                <li style="margin: 10px 0;">Читать новости и статьи</li>
+                <li style="margin: 10px 0;">Подписываться на интересные категории</li>
+                <li style="margin: 10px 0;">Получать уведомления о новых публикациях</li>
+                <li style="margin: 10px 0;">Стать автором и публиковать свои материалы</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/news/" style="display: inline-block; background: #667eea; color: white;">
+                Читать новости
+            </a>
+            <a href="{{ site_url }}/subscriptions/" style="display: inline-block; background: #764ba2; color: white;">
+                Управлять подписками
+            </a>
+        </div>
+        
+        <p style="color: #999; font-size: 12px;">
+            Если вы не регистрировались на нашем сайте, просто проигнорируйте это письмо.
+        </p>
+    </div>
+</body>
+</html>

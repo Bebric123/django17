@@ -19,13 +19,11 @@ class Author(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     
     def __str__(self):
         return self.name
-
 
 class Post(models.Model):
     ARTICLE = 'AR'
@@ -60,14 +58,12 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])
 
-
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
     def __str__(self):
         return f'{self.post.title} - {self.category.name}'
-
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -86,3 +82,24 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'Comment by {self.user.username} on {self.post.title}'
+    
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subscriptions')
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'category')
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.category.name}"
+    
+class WeeklySubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='weekly_subscriptions')
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user',)
+    
+    def __str__(self):
+        return f"{self.user.username} - weekly newsletter"

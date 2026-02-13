@@ -5,12 +5,14 @@ from django.contrib.auth.models import Group
 from django.views.generic import View
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Post, Author, User
+from .models import Post, Author, User, Category, Subscription, WeeklySubscription
 from datetime import datetime
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
 from django.contrib import messages
+from .tasks import send_notification_about_new_post
+from django.shortcuts import get_object_or_404, redirect
 
 LOGIN_URL = '/accounts/login/'
 
@@ -61,6 +63,13 @@ class NewsCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.post_type = 'NW'  # NEWS
+        author, _ = Author.objects.get_or_create(user=self.request.user)
+        post.author = author
+        post.save()
+        form.save_m2m()
+        send_notification_about_new_post.delay(post.id)
+        
+        messages.success(self.request, 'Новость успешно создана! Подписчики получат уведомления на почту.')
         return super().form_valid(form)
 
 class NewsUpdate(LoginRequiredMixin, UpdateView):
@@ -109,6 +118,13 @@ class ArticleCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.post_type = 'AR' 
+        author, _ = Author.objects.get_or_create(user=self.request.user)
+        post.author = author
+        post.save()
+        form.save_m2m()
+        send_notification_about_new_post.delay(post.id)
+        
+        messages.success(self.request, 'Новость успешно создана! Подписчики получат уведомления на почту.')
         return super().form_valid(form)
 
 
@@ -177,3 +193,72 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Профиль успешно обновлен!')
         return super().form_valid(form)
+    
+class SubscriptionView(LoginRequiredMixin, ListView):
+    model = Subscription
+    template_name = 'subscriptions.html'
+    context_object_name = 'subscriptions'
+    
+    def get_queryset(self):
+        return Subscription.objects.filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+class SubscribeView(LoginRequiredMixin, View):
+    def post(self, request, category_id):
+        category = get_object_or_404(Category, id=category_id)
+        subscription, created = Subscription.objects.get_or_create(
+            user=request.user,
+            category=category
+        )
+        
+        if created:
+            messages.success(request, f'Вы подписались на категорию "{category.name}"')
+        else:
+            messages.info(request, f'Вы уже подписаны на категорию "{category.name}"')
+        
+        return redirect(request.META.get('HTTP_REFERER', 'subscriptions'))
+
+class UnsubscribeView(LoginRequiredMixin, View):
+    def post(self, request, category_id):
+        category = get_object_or_404(Category, id=category_id)
+        deleted = Subscription.objects.filter(
+            user=request.user,
+            category=category
+        ).delete()[0]
+        
+        if deleted:
+            messages.success(request, f'Вы отписались от категории "{category.name}"')
+        else:
+            messages.error(request, f'Вы не были подписаны на категорию "{category.name}"')
+        
+        return redirect(request.META.get('HTTP_REFERER', 'subscriptions'))
+    
+class SubscribeWeeklyView(LoginRequiredMixin, View):
+    def post(self, request):
+        request.user.profile.weekly_newsletter = True
+        request.user.profile.save()
+        
+        messages.success(request, 'Вы подписались на еженедельную рассылку!')
+        return redirect(request.META.get('HTTP_REFERER', 'post_list'))
+    
+class SubscribeWeeklyView(LoginRequiredMixin, View):
+    def post(self, request):
+        sub, created = WeeklySubscription.objects.get_or_create(user=request.user)
+        if created:
+            messages.success(request, 'Вы подписались на еженедельную рассылку!')
+        else:
+            messages.info(request, 'Вы уже подписаны на еженедельную рассылку!')
+        return redirect(request.META.get('HTTP_REFERER', 'post_list'))
+
+class UnsubscribeWeeklyView(LoginRequiredMixin, View):
+    def post(self, request):
+        deleted, _ = WeeklySubscription.objects.filter(user=request.user).delete()
+        if deleted:
+            messages.success(request, 'Вы отписались от еженедельной рассылки!')
+        else:
+            messages.error(request, 'Вы не были подписаны на рассылку!')
+        return redirect(request.META.get('HTTP_REFERER', 'post_list'))

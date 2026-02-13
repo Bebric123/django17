@@ -133,8 +133,8 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
 ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
 
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # Не требовать подтверждение email от Google
-SOCIALACCOUNT_EMAIL_REQUIRED = False  # Email от Google считается подтвержденным
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_AUTO_SIGNUP = True 
 
@@ -168,3 +168,27 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': True,
     }
 }
+
+
+# ---------- НАСТРОЙКИ CELERY ----------
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+INSTALLED_APPS += [
+    'django_celery_beat',
+    'django_celery_results',
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'GMAIL_USER'
+EMAIL_HOST_PASSWORD = 'GMAIL_PASSWORD'
+DEFAULT_FROM_EMAIL = "GMAIL_USER"

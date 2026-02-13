@@ -1,0 +1,35 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Управление подписками</h1>
+
+<h3>Ваши подписки:</h3>
+{% if subscriptions %}
+    <ul>
+    {% for sub in subscriptions %}
+        <li>
+            {{ sub.category.name }} 
+            <form method="post" action="{% url 'unsubscribe' sub.category.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Отписаться</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>У вас нет активных подписок.</p>
+{% endif %}
+
+<h3>Доступные категории:</h3>
+<ul>
+    {% for category in categories %}
+        <li>
+            {{ category.name }}
+            <form method="post" action="{% url 'subscribe' category.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Подписаться</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
