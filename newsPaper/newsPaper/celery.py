@@ -14,9 +14,9 @@ app.conf.beat_schedule = {
     'send-weekly-news-every-monday-8am': {
         'task': 'news.tasks.send_weekly_news',
         'schedule': crontab(
-            hour=13,           # Час (0-23)
-            minute=5,          # Минуты (0-59)
-            day_of_week='friday'  # День недели: monday, tuesday, wednesday, thursday, friday, saturday, sunday
+            hour=8,           # Час (0-23)
+            minute=0,          # Минуты (0-59)
+            day_of_week='monday'  # День недели: monday, tuesday, wednesday, thursday, friday, saturday, sunday
         ),
         'args': (),
     },
