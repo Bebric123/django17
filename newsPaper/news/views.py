@@ -38,7 +38,7 @@ class TestLoggingView(View):
         
         # 3. Для general.log и консоли
         general_logger = logging.getLogger('django')
-        general_logger.info('ℹИнформационное сообщение')
+        general_logger.info('Информационное сообщение')
         general_logger.warning('Предупреждение')
         
         # 4. Для проверки стека ошибок

@@ -113,7 +113,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
-DEBUG = False
+DEBUG = True
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok=True)
 
@@ -254,9 +254,9 @@ if not DEBUG:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your-email@gmail.com')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-app-password')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'News Portal <noreply@newsportal.com>')
+    EMAIL_HOST_USER = os.getenv('GMAIL_USER', 'your-email@gmail.com')
+    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD', 'your-app-password')
+    DEFAULT_FROM_EMAIL = os.getenv('GMAIL_USER', 'News Portal <noreply@newsportal.com>')
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
     
     ADMINS = [
