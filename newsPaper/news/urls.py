@@ -4,7 +4,8 @@ from .views import (
     NewsCreate, NewsUpdate, NewsDelete,
     ArticleCreate, ArticleUpdate, ArticleDelete,
     BecomeAuthorView, ProfileUpdateView, SubscriptionView,
-    SubscribeView, UnsubscribeView, SubscribeWeeklyView
+    SubscribeView, UnsubscribeView, SubscribeWeeklyView,
+    TestLoggingView
 )
 
 urlpatterns = [
@@ -31,4 +32,6 @@ urlpatterns = [
     path('subscribe/<int:category_id>/', SubscribeView.as_view(), name='subscribe'),
     path('unsubscribe/<int:category_id>/', UnsubscribeView.as_view(), name='unsubscribe'),
     path('subscribe-weekly/', SubscribeWeeklyView.as_view(), name='subscribe_weekly'),
+
+    path('test-logging/', TestLoggingView.as_view(), name='test_logging'),
 ]

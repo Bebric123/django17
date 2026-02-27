@@ -9,12 +9,48 @@ from .models import Post, Author, User, Category, Subscription, WeeklySubscripti
 from datetime import datetime
 from .filters import PostFilter
 from .forms import PostForm
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .tasks import send_notification_about_new_post
 from django.shortcuts import get_object_or_404, redirect
+import logging
+
+request_logger = logging.getLogger('django.request')
+server_logger = logging.getLogger('django.server')
+template_logger = logging.getLogger('django.template')
+db_logger = logging.getLogger('django.db.backends')
+security_logger = logging.getLogger('django.security')
 
 LOGIN_URL = '/accounts/login/'
+
+class TestLoggingView(View):
+    def get(self, request):
+        # 1. Для errors.log (должны попасть)
+        request_logger.error('Ошибка в django.request', exc_info=True)
+        server_logger.critical('Критическая ошибка в django.server', exc_info=True)
+        template_logger.error('Ошибка в django.template')
+        db_logger.critical('Критическая ошибка в django.db.backends')
+        
+        # 2. Для security.log
+        security_logger.warning('Попытка несанкционированного доступа')
+        security_logger.error('Нарушение безопасности')
+        
+        # 3. Для general.log и консоли
+        general_logger = logging.getLogger('django')
+        general_logger.info('ℹИнформационное сообщение')
+        general_logger.warning('Предупреждение')
+        
+        # 4. Для проверки стека ошибок
+        try:
+            1/0
+        except Exception as e:
+            request_logger.exception('Исключение в django.request')
+        
+        return HttpResponse('Логи записаны. Проверьте файлы:\n'
+                           '- errors.log (только ERROR/CRITICAL из указанных логгеров)\n'
+                           '- security.log (все из django.security)\n'
+                           '- general.log (INFO+ при DEBUG=False)')
 
 class PostList(ListView):
     model = Post
